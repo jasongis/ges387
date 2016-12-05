@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+   <head>
+       <title>Afro Mexican</title>
+       <link rel="stylesheet" href="../lab1/leaflet.css" />
+       <script src="../lab1/leaflet.js"></script>
+       <script type="text/javascript" src="data.js"></script>
+
+       <style>
+    /* Change the values below to adjust the appearance of the legend */
+    .legend {
+        padding: 6px 8px;
+        line-height: 18px;
+        background: rgba(255,255,255,0.9);
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        border-radius: 5px;
+    }
+
+     /* Change the values below to adjust the appearance of the legend color boxes */
+     .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 8px;
+        opacity: 0.7;
+    }
+</style>
+   </head>
+
+   <body>
+
+     <h1> Effects of Classification Methods</h1>
+     <h2> Change classification methods from the upper right corner to display the corresponding patterns.</h2>
+       <div id="map" style="height: 700px"></div>
+
+       <script type="text/javascript">
+         var map = L.map('map').setView([23.034,-101.885], 5);
+// basemaps
+         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+           attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+           maxZoom: 8,
+           minZoom: 4,
+           id: 'mapbox.light',
+           accessToken: 'pk.eyJ1IjoiamFzb24yNWsiLCJhIjoiY2l0M2dmZHljMHVlczJ6a2h2b2RveXBlMSJ9._271U-q-hLbMPLZB1_K4iw'
+         }).addTo(map);
+
+//functions for map styles: three classification methods
+         function getColor_nb(value) {
+              return value > 6.5 ? '#7a0177':
+                     value > 4.9  ? '#c51b8a':
+                     value > 1.8  ? '#f768a1':
+                     value > 0.78  ? '#fbb4b9':
+                                   '#feebe2';
+          }
+
+          function style_nb(feature){
+              return {
+                  fillColor: getColor_nb(feature.properties.afromex_se),
+                  weight: 3,
+                  opacity: 1,
+                  color: 'gray',
+
+                  fillOpacity: 1
+              };
+          }
+
+          function getColor_q(value) {
+               return value > 6.5 ? '#7a0177':
+                      value > 0.73  ? '#c51b8a':
+                      value > 0.12  ? '#f768a1':
+                      value > 0.08  ? '#fbb4b9':
+                                    '#feebe2';
+           }
+
+           function style_q(feature){
+               return {
+                   fillColor: getColor_q(feature.properties.afromex_se),
+                   weight: 3,
+                   opacity: 1,
+                   color: 'gray',
+                   fillOpacity: 1
+               };
+           }
+
+           function getColor_ei(value) {
+                return value > 6.5 ? '#7a0177':
+                       value > 5.2  ? '#c51b8a':
+                       value > 3.9  ? '#f768a1':
+                       value > 2.6  ? '#fbb4b9':
+                                     '#feebe2';
+            }
+
+            function style_ei(feature){
+                return {
+                    fillColor: getColor_ei(feature.properties.afromex_se),
+                    weight: 3,
+                    opacity: 1,
+                    color: 'gray',
+                    fillOpacity: 1
+                };
+            }
+
+// Define layers and group
+         var nb = L.geoJson(data, {style:style_nb}).addTo(map);
+         var q = L.geoJson(data, {style:style_q});
+         var ei = L.geoJson(data, {style:style_ei});
+
+         var layers = {
+           "Natural Breaks": nb,
+           "Quantile": q,
+           "Equal Interval": ei
+         };
+
+         L.control.layers(layers).addTo(map);
+
+// define legend
+         var legend_nb = L.control({position: 'bottomright'}); // Try the other three corners if you like.
+         var legend_q = L.control({position: 'bottomright'});
+         var legend_ei = L.control({position: 'bottomright'});
+
+         legend_nb.onAdd = function (map) {
+
+           var div = L.DomUtil.create('div', 'legend'),
+            grades = [0, 0.78, 1.8, 4.9, 6.5]; // The break values to define the intervals of population, note we begin from 0 here
+
+          div.innerHTML = '<b>Afro Mexican population density <br> Natural Breaks <br></b>'; // The legend title, in this case it's Afro Mexican Afro Mexican population density 2011
+
+    // Loop through our median age intervals and generate a label with a colored square for each interval.
+    // If you are creating a similar choropleth map, you do not need to change lines below.
+      for (var i = 0; i < grades.length; i++) {
+          div.innerHTML +=
+          '<i style="background:' + getColor_nb(grades[i] + 1) + '"></i>' +
+          grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+      }
+      return div;
+      };
+
+
+      legend_q.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend'),
+         grades = [0, 0.08, 0.12, 0.73, 6.5]; // The break values to define the intervals of population, note we begin from 0 here
+
+       div.innerHTML = '<b>Afro Mexican population density <br> Quantile <br></b>'; // The legend title, in this case it's Afro Mexican population density 2011
+
+      // Loop through our median age intervals and generate a label with a colored square for each interval.
+      // If you are creating a similar choropleth map, you do not need to change lines below.
+      for (var i = 0; i < grades.length; i++) {
+       div.innerHTML +=
+       '<i style="background:' + getColor_q(grades[i] + 1) + '"></i>' +
+       grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+      }
+      return div;
+      };
+
+
+      legend_ei.onAdd = function (map) {
+
+        var div = L.DomUtil.create('div', 'legend'),
+         grades = [0, 2.6, 3.9, 5.2, 6.5]; // The break values to define the intervals of population, note we begin from 0 here
+
+       div.innerHTML = '<b>Afro Mexican population density <br> Equal Interval <br></b>'; // The legend title, in this case it's Afro Mexican population density 2011
+
+      // Loop through our median age intervals and generate a label with a colored square for each interval.
+      // If you are creating a similar choropleth map, you do not need to change lines below.
+      for (var i = 0; i < grades.length; i++) {
+       div.innerHTML +=
+       '<i style="background:' + getColor_ei(grades[i] + 1) + '"></i>' +
+       grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+      }
+      return div;
+      };
+
+      legend_nb.addTo(map);
+      currentlegend = legend_nb;
+
+      map.on('baselayerchange', function(eventLayer){
+          if (eventLayer.name === 'Quantile'){
+            map.removeControl(currentlegend);
+            currentlegend = legend_q;
+            legend_q.addTo(map);
+          }
+          else if (eventLayer.name === 'Equal Interval'){
+            map.removeControl(currentlegend);
+            currentlegend = legend_ei;
+            legend_ei.addTo(map);
+          }
+          else if (eventLayer.name === 'Natural Breaks'){
+            map.removeControl(currentlegend);
+            currentlegend = legend_nb;
+            legend_nb.addTo(map);
+          }
+      });
+
+       </script>
+  </body>
+</html>

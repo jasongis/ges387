@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Lab 2</title>
+        <link rel="stylesheet" href="../lab1/leaflet.css" />
+        <script src="../lab1/leaflet.js"></script>
+
+    </head>
+
+    <body>
+        <div id="map" style="height: 500px"></div>
+
+        <script type="text/javascript">
+          var map = L.map('map').setView([41.9799, -87.71953], 16);
+
+          L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+               attribution: '@ <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+               maxZoom: 20,
+               minZoom: 6
+            }).addTo(map);
+
+			var greenIcon = L.icon({
+    iconUrl: 'neiu.png',
+    shadowUrl: 'neiu.png',
+
+    iconSize:     [38, 95], // size of the icon
+    shadowSize:   [50, 64], // size of the shadow
+    iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+    shadowAnchor: [4, 62],  // the same for the shadow
+    popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+});
+
+		  var marker1 = L.marker([41.980528,-87.716818]).addTo(map);
+		  var marker2 = L.marker([41.980359,-87.719066]).addTo(map);
+		  var marker3 = L.marker([41.981256,-87.718642]).addTo(map);
+      var marker4 = L.marker([41.982437,-87.718497]).addTo(map);
+      var marker5 = L.marker([41.979688,-87.719626]).addTo(map);
+
+		  marker1.bindPopup("Benard Brommel Hall houses the deparment of Geography and Environmental Studies");
+		  marker2.bindPopup("Ronald Williams Library houses the university's print and electronic achives");
+		  marker3.bindPopup("Student Union is the hub of student activity, housing the dining area along with event spaces");
+      marker4.bindPopup("Lech Walesa Hall is home to the College of Education and the College of Arts and Sciences")
+      marker5.bindPopup("The Nest is NEIU's first resident student housing facility")
+
+        </script>
+   </body>
+</html>
